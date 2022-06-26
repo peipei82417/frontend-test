@@ -1,0 +1,29 @@
+.ant-layout {
+    padding: 80px;
+}
+
+.site-layout-content {
+    min-height: 100%;
+    padding: 24px;
+    background: rgb(225, 225, 225);
+}
+
+.ant-layout-sider-children {
+    background-color: rgb(176, 241, 255);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ant-layout-sider-children h3 {
+    margin-top: 1rem;
+}
+
+.ant-layout-sider-children button {
+    margin-top: 2rem;
+}
+
+.ant-checkbox-group {
+    display: flex;
+    flex-direction: column;
+}
