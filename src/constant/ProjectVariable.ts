@@ -78,6 +78,25 @@ export default class ProjectVariable {
         return groups;
     }
 
+    static groupByFields2 = (data: any[], fields: string[]): Map<string, any[]> => {
+        fields = fields.map(field => field.toLocaleLowerCase());
+        const groups = new Map(), len = data.length;
+        for (let i = 0; i < len; i++) {
+            const temp: any[] = [];
+            fields.forEach((field) => {
+                temp.push(data[i][field]);
+            });
+            const str = JSON.stringify(temp);
+            const existGroup = groups.get(str);
+            if (existGroup) {
+                groups.set(str, [...existGroup, data[i]]);
+            } else {
+                groups.set(str, [data[i]]);
+            }
+        }
+        return groups;
+    };
+
     static getTableRowByCols = (groups: any, fields: any) => {
         const cols: string[] = fields.map((field: any) => field['key']);
         const getAvg = (arr: any[], len: number) => {
@@ -100,8 +119,38 @@ export default class ProjectVariable {
                 const key = cols[j];
                 data[key] = groups[i][0][key];
             }
-            rows.push(data)
+            rows.push(data);
         }
-        return rows
+        return rows;
     }
+
+    static getTableRowByCols2 = (groups: Map<string, any[]>, fields: any): any[] => {
+        const cols: string[] = fields.map((field: any) => field['key']);
+        const getAvg = (arr: any[], len: number) => {
+            let totle: number = 0;
+            arr.forEach((i: any) => totle += i.price);
+            return Math.round((totle / len) * 100) / 100;
+        };
+        const rows: any[] = [];
+        let iter = groups.entries();
+        for (let i = 0; i < groups.size; i++) {
+            const [k, v] = iter.next().value;
+            const keys = JSON.parse(k);
+            const avgPrice = getAvg(v, v.length);
+            const data: any = {
+                id: i,
+                houses: v.length,
+                "avg. price": avgPrice
+            };
+            for (let j = cols.length - 1; j >= 0; j--) {
+                if (cols[j] in data) {
+                    continue;
+                }
+                data[cols[j]] = keys.pop();
+            }
+            rows.push(data);
+        }
+        groups.clear();
+        return rows;
+    };
 }
